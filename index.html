@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>test2</title>
+
+		<!-- TODO : Common API -->
+		<script type="text/javascript" language="javascript" src="$MANAGER_WIDGET/Common/API/Widget.js"></script>
+		<script type="text/javascript" language="javascript" src="$MANAGER_WIDGET/Common/API/TVKeyValue.js"></script>
+		<script language="javascript" type="text/javascript" src="$MANAGER_WIDGET/Common/jquery.js"> </script>
+
+
+<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+<script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+
+		<!-- TODO : Javascript code -->
+		<script language="javascript" type="text/javascript" src="app/javascript/lib.js"></script>
+		<script language="javascript" type="text/javascript" src="app/javascript/Main.js"></script>
+
+		<!-- TODO : Style sheets code -->
+		<link rel="stylesheet" href="app/stylesheets/Main.css" type="text/css">
+
+		<!-- TODO: Plugins -->
+
+	</head>
+
+	<body onload="Main.onLoad();" onunload="Main.onUnload();">
+    <!-- Dummy anchor as focus for key events -->
+    <a href='javascript:void(0);' id='anchor' onkeydown='Main.keyDown();'></a>
+
+    <div id="container">
+        <ul id="playlist">
+            <li group="1" id="vsetv_3" class="canalline">
+                <a href="http://193.108.248.11:5768/393">
+                    <img src="http://megatv.ck.ua/tvicons/3.png">
+                    1+1</a>
+            </li>
+            <li group="4" id="vsetv_23" class="canalline">
+                <a href="http://193.108.248.11:5768/394">
+                    <img src="http://megatv.ck.ua/tvicons/23.png">2+2</a>
+            </li>
+            <li group="5" id="vsetv_381" class="canalline">
+
+                <a href="http://193.108.248.11:5768/395">
+                    <img src="http://megatv.ck.ua/tvicons/381.png">24 Техно</a>
+            </li>
+            <li group="5" id="vsetv_279" class="canalline">
+
+                <a href="http://193.108.248.11:5768/396">
+                    <img src="http://megatv.ck.ua/tvicons/279.png">
+                    365 Дней ТВ</a>
+            </li>
+     </ul>
+    </div>
+		<!-- TODO: your code here -->
+	</body>
+</html>
