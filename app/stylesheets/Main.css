@@ -18,17 +18,16 @@ body
     border: 1px #ffffff solid;
     margin-top: 50px;
     position: absolute;
-    height: 600px;
+    height: 580px;
     width: 700px;
     overflow: hidden;
 }
 
 #playlist{
-    width: 600px;
     position: relative;
 }
 
-.canalline a{
+.in a{
     text-decoration: none;
     font-size: 24px;
     color: #ffffff;
@@ -37,33 +36,35 @@ body
     height: 100%;
 }
 
-.canalline a:hover{
+.in a:hover{
     color: #052359;
-    line-height: 54px
 }
 
 .canalline{
-    background: url('../images/bg-line.png') repeat-x 0 0;
     border-radius: 8px;
-    box-shadow: 2px 2px 1px rgba(50, 50, 50, 0.75);
-    margin: 6px;
     overflow: hidden;
+    padding: 5px;
 }
 
-.selected, .canalline:hover{
-    position: relative;
+.canalline.selected , .canalline:hover{
     background: url('../images/bg-line-active.png') repeat-x 0 0;
-    border-radius: 8px;
     box-shadow: 2px 2px 1px rgba(50, 50, 50, 0.75);
-    margin: 7px;
-    overflow: hidden;
-    margin-left: 4px;
-    width: 594px;
 }
 
-.selected a {
+.in{
+    background: url('../images/bg-line.png') repeat-x 0 ;
+    border-radius: 8px;
+    box-shadow: 2px 2px 1px rgba(50, 50, 50, 0.75);
+    height: 54px;
+}
+
+.canalline.selected .in, .in:hover{
+    background: none;
+    box-shadow: none;
+}
+
+.selected a, .canalline:hover a{
   color: #052359;
-  line-height: 64px
 }
 
 .canalline img{
@@ -80,4 +81,47 @@ body
     width: 400px;
     height: 400px;
     overflow-y: scroll;
+}
+
+#pluginObjectSEF{
+    z-index:99;
+}
+
+#pluginPlayer{
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 1280px;
+    height: 720px;
+    z-index: 0;
+}
+
+#pluginTVMW{
+    z-index:99;
+}
+
+#content-wrapper{
+    padding: 10px;
+    margin: 10px 0;
+}
+
+#cat-list .canalline{
+    opacity: 1;
+}
+
+
+
+#cat-list{
+    width: 350px;
+    height: 385px;
+    padding: 0px;
+    overflow:hidden;
+}
+#cat-list-back{
+    height: 388px;
+    width: 350px;
+    padding: 30px;
+    margin: 0 auto;
+    border-radius: 20px;
+    background-color: rgba(119, 136, 153, 0.10);
 }

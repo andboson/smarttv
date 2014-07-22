@@ -1,5 +1,19 @@
+var cats = {
+    '0': 'все',
+    '1': 'новости',
+    '2': 'развлекательные',
+    '3': 'детские',
+    '4': 'фильмы',
+    '5': 'познавательные',
+    '6': 'культура',
+    '7': 'музыкальные',
+    '8': 'бизнес',
+    '9': 'мода'
+}
+
+
 var m3u = function (url) {
-    var url = 'http://192.168.0.195/megatv-promo.m3u';
+    var url = 'http://megatv.ck.ua/megatv-promo.m3u';
     var plist = '';
     var canals = [];
 
@@ -23,13 +37,11 @@ var m3u = function (url) {
      load playlist
      */
     (function () {
-        alert('in');
         $.ajax({
             type: "GET",
             url: url,
             async: false,
             success: function (data) {
-                alert(data)
                 plist = data;
                 parse(plist);
             },
@@ -40,123 +52,129 @@ var m3u = function (url) {
         });
     })();
 
-    return {
-        url: url,
-        plist: function () {
-            return plist;
-        },
-        canals: function () {
-            return canals;
-        },
-        count: function () {
-            return plist.length ? canals.length : 0;
+    this.filterCanals = function(categoryId){
+        var filtered = [];
+        for(var i = 0; i < canals.length; i++){
+               if( canals[i].group == categoryId){
+                   filtered.push(canals[i]);
+               }
         }
-    };
+
+        return filtered;
+    }
 }
 
-function plist() {
+MainMenu = function(){
+    this.selected = 0;
+    this.categories = [];
+    this.buildCats = function(){
+        for(catId in cats){
+            var category = {
+                url: catId,
+                name: cats[catId],
+                group: catId,
+                id: catId
+            }
 
-    var parent = $('#container');
-    var m3uObj = m3u();
-
-    function buildPlaylist() {
-        var canals = m3uObj.canals();
-
-        var content = '<ul id="playlist">';
-
-        for (var i = 0; i < canals.length; i++) {
-            content += buildCanalLine(canals[i]);
+            this.categories.push(category);
         }
-        content += '</ul>';
+    };
 
-        parent.append(content);
-        $('#playlist').find('li').first().addClass('selected');
+    this.init = function(){
+        this.buildCats();
+        var parent = $('#cat-list-back');
+        this.list = new PlayList(this.categories, parent);
     }
 
-    function buildCanalLine(canal) {
+    this.init();
+}
 
-        if (canal.id == undefined) {
+PlayList = function (canals, container) {
+    var parent = container;
+    this.canals = canals;
+    this.page = 0;
+    this.selectedIndex = 0;
+    this.viewPortHeight = parent.height();
+    this.visibleCanals = Math.floor(this.viewPortHeight / 64);
+    this.pages = Math.round(this.canals.length / this.visibleCanals);
+
+    this.down = function() {
+        var selected = $('.canalline.selected');
+        if (selected.index() == $('.canalline').last().index()) {
+            this.page++;
+            this.nextPage();
+            return;
+        }
+        selected.next().addClass('selected');
+        selected.removeClass('selected');
+        this.selectedIndex = selected.next().index();
+    }
+
+
+    this.up = function() {
+        var selected = $('.canalline.selected');
+        if (selected.index() == 0) {
+            this.page--;
+            this.prevPage();
+            return;
+        }
+        selected.prev().addClass('selected');
+        selected.removeClass('selected');
+        this.selectedIndex = selected.prev().index();
+    }
+
+    this.buildPlaylistPage = function (page) {
+        parent.html('');
+        var content = '<ul id="playlist">';
+        var startIndex = page * this.visibleCanals;
+        var endIndex = startIndex + this.visibleCanals;
+        console.log(startIndex)
+        console.log(endIndex)
+        for (var i = startIndex; i < endIndex; i++) {
+            content += this.buildCanalLine(this.canals[i]);
+        }
+        content += '</ul>';
+        parent.append(content);
+    }
+
+    this.buildCanalLine = function(canal) {
+
+        if (canal == undefined || canal.id == undefined ) {
             return '';
         }
         var content = '<li class="canalline" id="' + canal.id + '" group="' + canal.group + '">';
-        content += '<img src="' + canal.icon + '">';
+        content += '<div class="in">';
+        if( canal.icon !== undefined ) {
+            content += '<img src="' + canal.icon + '">';
+        }
         content += '<a href="' + canal.url + '">' + canal.name + '</a>';
+        content += '</div>';
         content += '</li>';
 
         return content;
     }
 
-    return {
-        rawlist: m3uObj.plist(),
-        canals: m3uObj.canals(),
-        setContent: function () {
-            return buildPlaylist();
+    this.nextPage = function(){
+        if( this.page > this.pages - 1 ){
+            this.page = 0;
         }
-    };
+
+       this.buildPlaylistPage(this.page);
+        $('.canalline').first().addClass('selected');
+        this.selectedIndex = 0;
+    }
+
+    this.prevPage = function(){
+        if( this.page < 0){
+            this.page = this.pages - 1;
+        }
+        this.buildPlaylistPage(this.page);
+        $('.canalline').last().addClass('selected');
+        this.selectedIndex = (this.visibleCanals - 1);
+    }
+
+    this.buildPlaylistPage(0);
+    $('.canalline').first().addClass('selected');
 }
 
-function scollList() {
 
-    var page = 0;
-    var selectedIndex = 0;
-    var viewPortHeight = $('#container').height();
-    var visibleCanals = Math.floor(viewPortHeight / ($('.canalline').first().height() + 6));
-    var pages = Math.ceil($('.canalline').length / visibleCanals);
-
-    function down() {
-        var selected = $('.canalline.selected');
-        if(selected.index() == $('.canalline').last().index()) {
-            $('.canalline').removeClass('selected');
-            $('.canalline').first().addClass('selected');
-            selectedIndex =  $('.canalline').first().index();
-            checkPage();
-            return;
-        }
-        selected.next().addClass('selected');
-        selected.removeClass('selected');
-        selectedIndex = selected.next().index();
-        checkPage();
-    }
-
-    function up() {
-        var selected = $('.canalline.selected');
-        if(selected.index() == 0) {
-            $('.canalline').removeClass('selected');
-            $('.canalline').last().addClass('selected');
-            selectedIndex =  $('.canalline').last().index();
-            checkPage();
-            return;
-        }
-        selected.prev().addClass('selected');
-        selected.removeClass('selected');
-        selectedIndex = selected.prev().index();
-        checkPage();
-    }
-
-    function checkPage() {
-        page = Math.floor((selectedIndex) / visibleCanals);
-
-        $('#info').html('c' + visibleCanals + ' -- sindex' + selectedIndex + '-- ' + 'page' + page + '%' + selectedIndex % visibleCanals);
-        var margin = page * (visibleCanals + 1) * ($('.canalline').first().height());
-            $('#playlist').css('margin-top', '-' + (margin + 0.5) + 'px');
-
-        //correction position
-            var firstPageElement = $($('.canalline')[page * visibleCanals]);
-            var topPageListElementOffset = firstPageElement.offset().top;
-            var topContainerOffset = $('#container').offset().top;
-            var correction = topPageListElementOffset - (topContainerOffset + 10);
-            var currentMarginTop = Math.abs(parseInt($('#playlist').css('margin-top')));
-            $('#playlist').css('margin-top', '-' + (currentMarginTop + correction) + 'px');
-    }
-
-    return{
-        selected: selectedIndex,
-        up: function () {
-            return up();
-        },
-
-        down: function () {
-            return down();
-        }
-    }
-}

@@ -5,13 +5,12 @@
 		<title>test2</title>
 
 		<!-- TODO : Common API -->
-		<script type="text/javascript" language="javascript" src="$MANAGER_WIDGET/Common/API/Widget.js"></script>
-		<script type="text/javascript" language="javascript" src="$MANAGER_WIDGET/Common/API/TVKeyValue.js"></script>
-		<script language="javascript" type="text/javascript" src="$MANAGER_WIDGET/Common/jquery.js"> </script>
+        <script type='text/javascript' language='javascript' src='$MANAGER_WIDGET/Common/API/Widget.js'></script>
+        <script type='text/javascript' language='javascript' src='$MANAGER_WIDGET/Common/API/TVKeyValue.js'></script>
+        <script type='text/javascript' language='javascript' src='$MANAGER_WIDGET/Common/af/2.0.0/loader.js'></script>
 
-
-<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
-<script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+        <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
 
 		<!-- TODO : Javascript code -->
 		<script language="javascript" type="text/javascript" src="app/javascript/lib.js"></script>
@@ -23,13 +22,16 @@
 
 		<!-- TODO: Plugins -->
 
-        <!-- Plugins -->
-        <object id="pluginPlayer" border=0 classid="clsid:SAMSUNG-INFOLINK-PLAYER"></object>
-        <object id="pluginAudio" border=0 classid="clsid:SAMSUNG-INFOLINK-AUDIO"></object>
-        <object id="pluginTVMW" border=0 classid="clsid:SAMSUNG-INFOLINK-TVMW"></object>
-	</head>
+</head>
 
 	<body onload="Main.onLoad();" onunload="Main.onUnload();">
+    <div id="content-wrapper">
+        <div id="main-screen">
+            <div id="cat-list-back">
+                </div>
+        </div>
+    </div>
+
     <!-- Dummy anchor as focus for key events -->
     <a href='javascript:void(0);' id='anchor' onkeydown='Main.keyDown();'></a>
 
