@@ -12,7 +12,7 @@ var cats = {
 }
 
 
-var m3u = function (url) {
+var M3u = function (url) {
     var url = 'http://megatv.ck.ua/megatv-promo.m3u';
     var plist = '';
     var canals = [];
@@ -52,53 +52,86 @@ var m3u = function (url) {
         });
     })();
 
-    this.filterCanals = function(categoryId){
+    this.filterCanals = function (categoryId) {
+
+        if (categoryId == 0) {
+            return canals;
+        }
+
         var filtered = [];
-        for(var i = 0; i < canals.length; i++){
-               if( canals[i].group == categoryId){
-                   filtered.push(canals[i]);
-               }
+        for (var i = 0; i < canals.length; i++) {
+            if (canals[i].group == categoryId) {
+                filtered.push(canals[i]);
+            }
         }
 
         return filtered;
     }
 }
 
-MainMenu = function(){
-    this.selected = 0;
+MainMenu = function () {
+    this.selected = -1;
     this.categories = [];
-    this.buildCats = function(){
-        for(catId in cats){
+    this.buildCats = function () {
+        index = 0;
+        for (catId in cats) {
             var category = {
+                index: index,
                 url: catId,
                 name: cats[catId],
                 group: catId,
                 id: catId
             }
-
+            index++;
             this.categories.push(category);
         }
+        $('.header').html('build cats');
     };
 
-    this.init = function(){
+    this.init = function () {
         this.buildCats();
         var parent = $('#cat-list-back');
-        this.list = new PlayList(this.categories, parent);
+        this.list = function (callback) {
+            $('.header').html(this.categories.join(', '));
+            return new PlayList(this.categories, parent, callback);
+        }
     }
 
-    this.init();
+    this.pickSelected = function (cb) {
+        if (MainMenu.selected == -1) {
+            return;
+        }
+
+        if (MainMenu.selected > cb.visibleCanals - 1) {
+            cb.page = Math.floor(MainMenu.selected / cb.visibleCanals);
+            cb.callback = null;
+            cb.nextPage();
+            $('.canalline').removeClass('selected');
+            $('#' + this.categories[MainMenu.selected].id).addClass('selected');
+            return;
+        }
+
+        if (this.categories[MainMenu.selected] instanceof Object) {
+            $('.canalline').removeClass('selected');
+            $('#' + this.categories[MainMenu.selected].id).addClass('selected');
+        }
+    }
+
+    this.init(null);
 }
 
-PlayList = function (canals, container) {
+PlayList = function (canals, container, callback) {
+
     var parent = container;
+    this.callback = callback;
     this.canals = canals;
     this.page = 0;
     this.selectedIndex = 0;
-    this.viewPortHeight = parent.height();
+    this.viewPortHeight = parseInt(parent.css('height'));
     this.visibleCanals = Math.floor(this.viewPortHeight / 64);
     this.pages = Math.round(this.canals.length / this.visibleCanals);
 
-    this.down = function() {
+    this.down = function () {
         var selected = $('.canalline.selected');
         if (selected.index() == $('.canalline').last().index()) {
             this.page++;
@@ -107,11 +140,12 @@ PlayList = function (canals, container) {
         }
         selected.next().addClass('selected');
         selected.removeClass('selected');
+        epg.getDProgram();
         this.selectedIndex = selected.next().index();
     }
 
 
-    this.up = function() {
+    this.up = function () {
         var selected = $('.canalline.selected');
         if (selected.index() == 0) {
             this.page--;
@@ -120,31 +154,46 @@ PlayList = function (canals, container) {
         }
         selected.prev().addClass('selected');
         selected.removeClass('selected');
+        epg.getDProgram();
         this.selectedIndex = selected.prev().index();
     }
 
-    this.buildPlaylistPage = function (page) {
+    this.buildPlaylistPage = function (page, selectFirst) {
         parent.html('');
         var content = '<ul id="playlist">';
         var startIndex = page * this.visibleCanals;
         var endIndex = startIndex + this.visibleCanals;
-        console.log(startIndex)
-        console.log(endIndex)
+        $('.header').html(startIndex + '--' + endIndex);
         for (var i = startIndex; i < endIndex; i++) {
             content += this.buildCanalLine(this.canals[i]);
         }
         content += '</ul>';
         parent.append(content);
+
+        if (selectFirst != false) {
+            $('.canalline').first().addClass('selected');
+        } else if (selectFirst == false) {
+            $('.canalline').last().addClass('selected');
+        }
+
+        if (this.callback) {
+            this.callback(this);
+        }
+
+        if (Main.screen == 1) {
+            epg.getDProgram();
+        }
+
     }
 
-    this.buildCanalLine = function(canal) {
+    this.buildCanalLine = function (canal) {
 
-        if (canal == undefined || canal.id == undefined ) {
+        if (canal == undefined || canal.id == undefined) {
             return '';
         }
         var content = '<li class="canalline" id="' + canal.id + '" group="' + canal.group + '">';
         content += '<div class="in">';
-        if( canal.icon !== undefined ) {
+        if (canal.icon !== undefined) {
             content += '<img src="' + canal.icon + '">';
         }
         content += '<a href="' + canal.url + '">' + canal.name + '</a>';
@@ -154,27 +203,71 @@ PlayList = function (canals, container) {
         return content;
     }
 
-    this.nextPage = function(){
-        if( this.page > this.pages - 1 ){
+    this.nextPage = function () {
+        if (this.page > this.pages - 1) {
             this.page = 0;
         }
 
-       this.buildPlaylistPage(this.page);
+        this.buildPlaylistPage(this.page);
         $('.canalline').first().addClass('selected');
         this.selectedIndex = 0;
     }
 
-    this.prevPage = function(){
-        if( this.page < 0){
+    this.prevPage = function () {
+        if (this.page < 0) {
             this.page = this.pages - 1;
         }
-        this.buildPlaylistPage(this.page);
-        $('.canalline').last().addClass('selected');
+        this.buildPlaylistPage(this.page, false);
         this.selectedIndex = (this.visibleCanals - 1);
     }
 
     this.buildPlaylistPage(0);
-    $('.canalline').first().addClass('selected');
-}
+};
+
+var Epg = function () {
+    this.url = 'http://megatv.ck.ua/program.php?sort=today&chan=';
+    this.program = '';
+    Epg.programs = [];
+
+    function parse(data) {
+        var end = data.indexOf('<style');
+        var program = data.substr(0, end);
+
+        return program;
+    }
+
+    this.getDProgram = function () {
+
+        var selectedItem = $('.canalline.selected');
+        if (selectedItem == undefined) {
+            return;
+        }
+        var channel = selectedItem.attr('id').match(/\d+/)[0];
+        if (!channel) {
+            return;
+        }
+
+        alert('channel' + channel);
+        if (Epg.programs[channel] == undefined) {
+            $('#epg-table').html('<tr><td><br><p>идет загрузка...</p></td></tr>tr>');
+            $.ajax({
+                type: "GET",
+                url: this.url + channel,
+                async: true,
+                success: function (data) {
+                    this.program = parse(data);
+                    Epg.programs[channel] = this.program;
+
+                    $('#epg-table').html(this.program);
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    alert('err ' + textStatus);
+                }
+            });
+        } else {
+            $('#epg-table').html(Epg.programs[channel]);
+        }
+    }
+};
 
 

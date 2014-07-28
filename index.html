@@ -9,9 +9,6 @@
         <script type='text/javascript' language='javascript' src='$MANAGER_WIDGET/Common/API/TVKeyValue.js'></script>
         <script type='text/javascript' language='javascript' src='$MANAGER_WIDGET/Common/af/2.0.0/loader.js'></script>
 
-        <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
-    <script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
-
 		<!-- TODO : Javascript code -->
 		<script language="javascript" type="text/javascript" src="app/javascript/lib.js"></script>
 		<script language="javascript" type="text/javascript" src="app/javascript/Main.js"></script>
@@ -25,20 +22,63 @@
 </head>
 
 	<body onload="Main.onLoad();" onunload="Main.onUnload();">
-    <div id="content-wrapper">
+    <div id="splash1"></div>
         <div id="main-screen">
-            <div id="cat-list-back">
-                </div>
-        </div>
-    </div>
+            <div class="header">head</div>
+            <div class="curr">
 
+                <!--Kurs.com.ua main-ukraine 300x130 blue-->
+                <div id='kurs-com-ua-informer-main-ukraine-300x130-blue-container'>Курс валют предоставлен сайтом <a href='http://kurs.com.ua/' id='kurs-com-ua-informer-main-ukraine-300x130-blue' title='Курс валют' target='_blank'>kurs.com.ua</a></div>
+                <script type='text/javascript'>
+                    (function() {var rnd = +new Date;var iframe = '<ifr'+'ame src="http://kurs.com.ua/informer/inf2?color=blue&rnd='+rnd+'" width="300" height="130" frameborder="0" vspace="0" scrolling="no" hspace="0"></ifr'+'ame>';var container = document.getElementById('kurs-com-ua-informer-main-ukraine-300x130-blue');container.parentNode.innerHTML = iframe;})();
+                </script>
+                <noscript><img src='http://kurs.com.ua/static/images/informer/kurs.png' width='52' height='26' alt='kurs.com.ua: курс валют в Украине!' title='Курс валют' border='0' /></noscript>
+                <!--//Kurs.com.ua main-ukraine 300x130 blue-->
+            </div>
+            <div class="weather">
+
+                <!--<a href="http://www.accuweather.com/en/us/new-york-ny/10007/weather-forecast/349727" class="aw-widget-legal">-->
+                    <!--&lt;!&ndash;-->
+                    <!--By accessing and/or using this code snippet, you agree to AccuWeather’s terms and conditions (in English) which can be found at http://www.accuweather.com/en/free-weather-widgets/terms and AccuWeather’s Privacy Statement (in English) which can be found at http://www.accuweather.com/en/privacy.-->
+                    <!--&ndash;&gt;-->
+                <!--</a><div id="awcc1406579279178" class="aw-widget-current"  data-locationkey="" data-unit="c" data-language="uk" data-useip="true" data-uid="awcc1406579279178"></div><script type="text/javascript" src="http://oap.accuweather.com/launch.js"></script>-->
+
+
+                <div id="MeteoInformerWrap">
+                    <script type="text/javascript" src="http://meteo.ua/var/informers.js"></script>
+                    <script type="text/javascript">
+                        makeMeteoInformer("http://meteo.ua/informer/get.php?cities=56&w=279&lang=ru&rnd=1&or=horiz&clr=25&dt=today&style=modern",279,229);
+                    </script></div>
+            </div>
+            <div id="cat-list-back"></div>
+            <div class="tv-pic-under">
+                <div class="un-pic-left"></div>
+                <div class="un-pic-right"></div>
+            </div>
+            <div class="tv-pic">
+                <img src="app/images/Samsung-Smart-TV.jpg" alt=""/>
+                <span>ТВ</span>
+            </div>
+        </div>
+        <div id="play-screen">
+            <div class="header">head</div>
+            <div id="back-btn">
+            <h2><</h2>
+            <h2>Н</h2>
+            <h2>А</h2>
+            <h2>З</h2>
+            <h2>А</h2>
+            <h2>Д</h2>
+            <h2><</h2>
+            </div>
+            <div id="container">
+            </div>
+            <div id="epg">
+                <table id="epg-table"></table>
+            </div>
+        </div>
+        <div class="clearfix"></div>
     <!-- Dummy anchor as focus for key events -->
     <a href='javascript:void(0);' id='anchor' onkeydown='Main.keyDown();'></a>
-
-    <div id="container">
-    </div>
-    <div id="info"></div>
-		<!-- TODO: your code here -->
 	</body>
-
 </html>

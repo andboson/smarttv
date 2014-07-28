@@ -8,19 +8,77 @@
 /* Layout */
 body
 {
-	width: 1280px;
-	height: 720px;
-	background: #fff url('../images/lune.jpg');
+	width: 960px;
+	height: 540px;
+	background: #fff url('../images/lune.jpg') 90% 30%;
+    overflow: hidden;
+}
+
+#splash{
+    position: absolute;
+    z-index: 99;
+    text-align: center;
+    background: #fff url('../images/splash.jpg') center center;
 }
 
 
-#container{
-    border: 1px #ffffff solid;
-    margin-top: 50px;
-    position: absolute;
-    height: 580px;
-    width: 700px;
+#main-screen, #play-screen, #splash{
+    width: 1280px;
+    height: 720px;
     overflow: hidden;
+}
+
+
+#back-btn h2{
+    font-weight: normal;
+}
+#back-btn{
+    border-radius: 0 20px 20px 0;
+    background-color: rgba(119, 136, 153, 0.10);
+    float: left;
+    height: 380px;
+    width: 50px;
+    padding: 100px 0;
+    line-height: 50px;
+    color: white;
+    text-align: center;
+}
+
+#container{
+    margin-left: 20px;
+    float: left;
+    height: 580px;
+    width: 500px;
+    overflow: hidden;
+}
+
+
+#epg{
+    float: left;
+    margin-left: 40px;
+    overflow-y: scroll;
+    height: 580px;
+    width: 600px;
+    font-size: 24px;
+    color: #ffffff;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: rgba(119, 136, 153, 0.10);
+}
+
+.epg-selected{
+    border: 1px #ffffff solid;
+}
+
+#epg table{
+    width: 100%;
+}
+
+#epg table td{
+    padding-top: 10px;
+}
+#epg .time{
+    width: 90px;
 }
 
 #playlist{
@@ -118,10 +176,84 @@ body
     overflow:hidden;
 }
 #cat-list-back{
-    height: 388px;
+    height: 320px;
     width: 350px;
     padding: 30px;
     margin: 0 auto;
     border-radius: 20px;
     background-color: rgba(119, 136, 153, 0.10);
+}
+
+.tv-pic-under{
+    background-color: rgba(119, 136, 153, 0.10);
+    height: 20px;
+    width: 200px;
+    margin: 0 auto;
+
+}
+.un-pic-left{
+    background: url("../images/lune.jpg") repeat scroll 50% 50% #fff;
+    background-color: transparent;
+    border-radius: 10px;
+    float: left;
+    height: 20px;
+    margin-left: -40px;
+    width: 50px;
+}
+
+.un-pic-right{
+    background: url("../images/lune.jpg") repeat scroll 50% 50% #fff;
+    background-color: transparent;
+    border-radius: 10px;
+    float: right;
+    height: 20px;
+    margin-right: -40px;
+    width: 50px;
+}
+
+.tv-pic{
+    width: 350px;
+    padding: 30px;
+    margin: 0 auto;
+    border-radius: 20px;
+    background-color: rgba(119, 136, 153, 0.10);
+    text-align: center;
+}
+
+.tv-pic span{
+    font-size: 24px;
+    color: #ffffff;
+    text-align: center;
+    float: left;
+    margin: 0 0 0 45%;
+}
+
+.tv-pic img{
+    width: 350px;
+    border-radius: 15px;
+}
+
+div#cat-list-back ul#playlist .canalline div.in{
+    padding-left:18px;
+}
+
+.header{
+    color: white;
+    text-align: center;
+}
+
+.clearfix{
+    clear: both;
+}
+
+.weather{
+    margin-top: 60px;
+    margin-right: 70px;
+    float: right;
+}
+
+.curr{
+    margin-top: 60px;
+    margin-left: 70px;
+    float: left;
 }

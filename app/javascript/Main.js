@@ -1,71 +1,62 @@
 var widgetAPI = new Common.API.Widget();
 var tvKey = new Common.API.TVKeyValue();
+var epg = new Epg();
 
 var Main =
 {
-    selectedVideo : 0,
-    mode : 0,
-    mute : 0,
+    focusedEpg:0,
+    m3uObj: null,
+    screen: 0,
+    selectedVideo: 0,
+    mode: 0,
+    mute: 0,
 
-    UP : 0,
-    DOWN : 1,
+    UP: 0,
+    DOWN: 1,
 
-    WINDOW : 0,
-    FULLSCREEN : 1,
+    WINDOW: 0,
+    FULLSCREEN: 1,
 
-    NMUTE : 0,
-    YMUTE : 1
+    NMUTE: 0,
+    YMUTE: 1
 }
 
-Main.onLoad = function()
-{
+Main.onLoad = function () {
     alert("onload");
 
-    if ( Player.init())
-    {
-        Player.stopCallback = function()
-        {
-            /* Return to windowed mode when video is stopped
-             (by choice or when it reaches the end) */
+    if (Player.init()) {
+        Player.stopCallback = function () {
             Main.setWindowMode();
         }
-
-        var menu = new MainMenu();
-        this.playlist = menu.list;
+        this.showMainScreen();
         // Enable key event processing
         this.enableKeys();
 
         widgetAPI.sendReadyEvent();
     }
-    else
-    {
+    else {
         alert("Failed to initialise");
     }
 }
 
-Main.onUnload = function()
-{
+Main.onUnload = function () {
     Player.deinit();
 }
 
-Main.updateCurrentVideo = function(move)
-{
-    Player.setVideoURL( Data.getVideoURL(this.selectedVideo) );
+Main.updateCurrentVideo = function (move) {
+    Player.setVideoURL(Data.getVideoURL(this.selectedVideo));
 }
 
-Main.enableKeys = function()
-{
+Main.enableKeys = function () {
     document.getElementById("anchor").focus();
 }
 
-Main.keyDown = function()
-{
+Main.keyDown = function () {
 
     var keyCode = event.keyCode;
     alert("Key pressed: " + keyCode);
 
-    switch(keyCode)
-    {
+    switch (keyCode) {
         case tvKey.KEY_RED:
             sf.service.setScreenSaver(true);
             break;
@@ -73,7 +64,7 @@ Main.keyDown = function()
             sf.service.setScreenSaver(true, 100);
             break;
         case tvKey.KEY_YELLOW:
-            sf.service.AVSetting.show(function asd(){
+            sf.service.AVSetting.show(function asd() {
                 Main.enableKeys();
             });
 
@@ -84,14 +75,19 @@ Main.keyDown = function()
         case tvKey.KEY_RETURN:
         case tvKey.KEY_PANEL_RETURN:
             alert("RETURN");
-            Player.stopVideo();
-            widgetAPI.sendReturnEvent();
+            sf.key.preventDefault();
+            if (this.screen == 1 ) {
+                this.showMainScreen();
+                Player.stopVideo();
+            } else if(this.screen == 0){
+                Main = null;
+                widgetAPI.sendReturnEvent();
+            }
             break;
             break;
 
         case tvKey.KEY_PLAY:
             alert("PLAY");
-
             this.handlePlayKey();
             break;
 
@@ -107,32 +103,48 @@ Main.keyDown = function()
 
         case tvKey.KEY_FF:
             alert("FF");
-            if(Player.getState() != Player.PAUSED)
+            if (Player.getState() != Player.PAUSED)
                 Player.skipForwardVideo();
             break;
 
         case tvKey.KEY_RW:
             alert("RW");
-            if(Player.getState() != Player.PAUSED)
+            if (Player.getState() != Player.PAUSED)
                 Player.skipBackwardVideo();
             break;
 
         case tvKey.KEY_RIGHT:
             alert("DOWN");
-            this.selectNextVideo(this.DOWN);
+            if(Main.focusedEpg != 1 && Main.screen == 1){
+                $('#epg').addClass('epg-selected');
+                Main.focusedEpg = 1;
+            }
             break;
 
         case tvKey.KEY_LEFT:
+            if(Main.focusedEpg == 1) {
+                $('#epg').removeClass('epg-selected');
+                Main.focusedEpg = 0;
+                return;
+            }
             alert("UP");
-            this.selectPreviousVideo(this.UP);
+            this.showMainScreen();
             break;
 
         case tvKey.KEY_UP:
+            if(Main.focusedEpg == 1) {
+                $('#epg').scrollTop( $('#epg').scrollTop() - 100);
+                return;
+            }
             alert("UP");
             this.playlist.up();
             break;
 
         case tvKey.KEY_DOWN:
+            if(Main.focusedEpg == 1) {
+                $('#epg').scrollTop( $('#epg').scrollTop() + 100);
+                 return;
+            }
             alert("down");
             this.playlist.down();
             break;
@@ -140,7 +152,6 @@ Main.keyDown = function()
         case tvKey.KEY_ENTER:
         case tvKey.KEY_PANEL_ENTER:
             alert("ENTER");
-
             this.handlePlayKey();
             break;
 
@@ -155,45 +166,62 @@ Main.keyDown = function()
     }
 }
 
-Main.handlePlayKey = function()
-{
+Main.showMainScreen = function () {
+    var menu = new MainMenu();
+    this.playlist = menu.list(function(cb){
+        $('#splash').hide();
+        $('#main-screen').show();
+        $('#container').html('');
+        menu.pickSelected(cb);
+    });
+    this.screen = 0;
+}
+
+Main.showPlaylist = function (catId) {
+    if(this.m3uObj == null){
+        this.m3uObj = new M3u();
+    }
+    $('#cat-list-back').html('');
+    $('#main-screen').hide();
+    var parent = $('#container');
+    var canals = this.m3uObj.filterCanals(catId);
+    this.playlist = new PlayList(canals, parent, null);
+    this.screen = 1;
+    epg.getDProgram();
+};
+
+Main.handlePlayKey = function () {
     var url = $('.canalline.selected').find('a').attr('href');
     var name = $('.canalline.selected').find('a').html();
 
-    if( isFinite(url)){
-        $('#cat-list-back').html('');
-        var parent = $('#container');
-        var m3uObj = new m3u();
-        var canals = m3uObj.filterCanals(url);
-        this.playlist = new PlayList(canals, parent);
-    } else {
-    switch ( Player.getState() )
-    {
-        case Player.STOPPED:
-            Player.setFullscreen();
-            Player.setVideo(url, name);
-            Player.playVideo();
-            break;
+    if (this.screen == 0) {
+        MainMenu.selected = url;
+        this.showPlaylist(url);
+    } else if( this.screen == 1 ) {
+        switch (Player.getState()) {
+            case Player.STOPPED:
+                Player.setFullscreen();
+                Player.setVideo(url, name);
+                Player.playVideo();
+                break;
 
-        case Player.PAUSED:
-            Player.resumeVideo();
-            break;
+            case Player.PAUSED:
+                Player.resumeVideo();
+                break;
 
-        case Player.PLAYING:
-            Player.stopVideo();
-            Player.setWindow();
+            case Player.PLAYING:
+                Player.stopVideo();
+                Player.setWindow();
 
-        default:
-            alert("Ignoring play key, not in correct state");
-            break;
+            default:
+                alert("Ignoring play key, not in correct state");
+                break;
+        }
     }
-    }
-}
+};
 
-Main.handlePauseKey = function()
-{
-    switch ( Player.getState() )
-    {
+Main.handlePauseKey = function () {
+    switch (Player.getState()) {
         case Player.PLAYING:
             Player.pauseVideo();
             break;
@@ -204,31 +232,8 @@ Main.handlePauseKey = function()
     }
 }
 
-Main.selectNextVideo = function(down)
-{
-    Player.stopVideo();
-
-    this.selectedVideo = (this.selectedVideo + 1) % Data.getVideoCount();
-
-    this.updateCurrentVideo(down);
-}
-
-Main.selectPreviousVideo = function(up)
-{
-    Player.stopVideo();
-
-    if (--this.selectedVideo < 0)
-    {
-        this.selectedVideo += Data.getVideoCount();
-    }
-
-    this.updateCurrentVideo(up);
-}
-
-Main.setFullScreenMode = function()
-{
-    if (this.mode != this.FULLSCREEN)
-    {
+Main.setFullScreenMode = function () {
+    if (this.mode != this.FULLSCREEN) {
 
         Player.setFullscreen();
 
@@ -236,24 +241,19 @@ Main.setFullScreenMode = function()
     }
 }
 
-Main.setWindowMode = function()
-{
-    if (this.mode != this.WINDOW)
-    {
+Main.setWindowMode = function () {
+    if (this.mode != this.WINDOW) {
         Player.setWindow();
 
         this.mode = this.WINDOW;
     }
 }
 
-Main.toggleMode = function()
-{
-    if(Player.getState() == Player.PAUSED)
-    {
+Main.toggleMode = function () {
+    if (Player.getState() == Player.PAUSED) {
         Player.resumeVideo();
     }
-    switch (this.mode)
-    {
+    switch (this.mode) {
         case this.WINDOW:
             this.setFullScreenMode();
             break;
