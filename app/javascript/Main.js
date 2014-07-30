@@ -1,6 +1,7 @@
 var widgetAPI = new Common.API.Widget();
 var tvKey = new Common.API.TVKeyValue();
 var epg = new Epg();
+var playLast = new PlayLast();
 
 var Main =
 {
@@ -31,8 +32,11 @@ Main.onLoad = function () {
         this.showMainScreen();
         // Enable key event processing
         this.enableKeys();
-
+        dateLabel();
+        window.setInterval(dateLabel, 30);
+        window.setInterval(timeLabel, 30);
         widgetAPI.sendReadyEvent();
+        playLast.check(this);
     }
     else {
         alert("Failed to initialise");
@@ -81,6 +85,7 @@ Main.keyDown = function () {
                 Player.stopVideo();
             } else if(this.screen == 0){
                 Main = null;
+                playLast.forget();
                 widgetAPI.sendReturnEvent();
             }
             break;
@@ -179,14 +184,18 @@ Main.showMainScreen = function () {
 
 Main.showPlaylist = function (catId) {
     if(this.m3uObj == null){
-        this.m3uObj = new M3u();
+        this.m3uObj = new M3u(null);
     }
+
+    MainMenu.selectedCaption =  $('.canalline.selected').find('a').html();
     $('#cat-list-back').html('');
     $('#main-screen').hide();
     var parent = $('#container');
     var canals = this.m3uObj.filterCanals(catId);
     this.playlist = new PlayList(canals, parent, null);
     this.screen = 1;
+    $('#play-screen .header p span').html(MainMenu.selectedCaption);
+    timeLabel();
     epg.getDProgram();
 };
 
@@ -196,11 +205,13 @@ Main.handlePlayKey = function () {
 
     if (this.screen == 0) {
         MainMenu.selected = url;
+        playLast.remember(url);
         this.showPlaylist(url);
     } else if( this.screen == 1 ) {
         switch (Player.getState()) {
             case Player.STOPPED:
                 Player.setFullscreen();
+                playLast.remember('','',$('.canalline.selected').index());
                 Player.setVideo(url, name);
                 Player.playVideo();
                 break;

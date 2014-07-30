@@ -17,18 +17,6 @@ Player.init = function () {
     var success = true;
     alert("success vale :  " + success);
     this.state = this.STOPPED;
-    var cookie = function () {
-        var result = [];
-        document.cookie.split('; ').forEach(function (e) {
-            var item = e.split('=');
-            result[item[0]] = item[1];
-            console.log(item)
-        });
-        return result;
-    }();
-
-    this.rememberedUrl = cookie.lastUrl;
-
     sf.service.VideoPlayer.init({
         onstatechange: function (state) {
             alert('Current State : ' + state);

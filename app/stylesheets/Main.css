@@ -10,8 +10,31 @@ body
 {
 	width: 960px;
 	height: 540px;
-	background: #fff url('../images/lune.jpg') 90% 30%;
+	background: #fff url('../images/bg2.png') 0 0;
     overflow: hidden;
+}
+
+#main-screen .header{
+    height: 20px;
+}
+
+#play-screen .header{
+    height: 70px;
+    text-align: left;
+    padding-left: 170px;
+}
+
+#play-screen .header p{
+    text-transform: uppercase;
+    padding-top: 25px;
+    font-size: 26px;
+    color: #ffffff;
+}
+
+#play-screen .header p .time{
+    float: right;
+    margin-right: 95px;
+    text-decoration: none;
 }
 
 #splash{
@@ -19,6 +42,20 @@ body
     z-index: 99;
     text-align: center;
     background: #fff url('../images/splash.jpg') center center;
+}
+
+#header-label{
+    position: absolute;
+    text-align: left;
+    top:15px;
+    right: -10px;
+    height: 44px;
+    width: 400px;
+    font-size: 24px;
+    line-height: 44px;
+    padding-left: 20px;
+    color: #ffffff;
+    background: #fff url('../images/date-label.png') 0 0;
 }
 
 
@@ -57,7 +94,7 @@ body
     float: left;
     margin-left: 40px;
     overflow-y: scroll;
-    height: 580px;
+    height: 550px;
     width: 600px;
     font-size: 24px;
     color: #ffffff;
@@ -192,7 +229,7 @@ body
 
 }
 .un-pic-left{
-    background: url("../images/lune.jpg") repeat scroll 50% 50% #fff;
+    background: url("../images/bg2.png") repeat scroll 55% 55% #fff;
     background-color: transparent;
     border-radius: 10px;
     float: left;
@@ -202,7 +239,7 @@ body
 }
 
 .un-pic-right{
-    background: url("../images/lune.jpg") repeat scroll 50% 50% #fff;
+    background: url("../images/bg2.png") repeat scroll 55% 55% #fff;
     background-color: transparent;
     border-radius: 10px;
     float: right;
@@ -247,13 +284,18 @@ div#cat-list-back ul#playlist .canalline div.in{
 }
 
 .weather{
-    margin-top: 60px;
+    margin-top: 70px;
     margin-right: 70px;
     float: right;
+    height: 195px;
+    overflow: hidden;
+    border-radius: 8px;
 }
 
+
+
 .curr{
-    margin-top: 60px;
+    margin-top: 70px;
     margin-left: 70px;
     float: left;
 }

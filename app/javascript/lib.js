@@ -11,7 +11,36 @@ var cats = {
     '9': 'мода'
 }
 
+var months = {
+    '0' : 'января',
+    '1' : 'февраля',
+    '2' : 'марта',
+    '3' : 'апреля',
+    '4' : 'мая',
+    '5' : 'июня',
+    '6' : 'июля',
+    '7' : 'августа',
+    '8' : 'сентября',
+    '9' : 'октября',
+    '10' : 'ноября',
+    '11' : 'декабря'
+};
 
+var days = {
+    '1' : 'понедельник',
+    '2' : 'вторник',
+    '3' : 'среда',
+    '4' : 'четверг',
+    '5' : 'пятница',
+    '6' : 'субббота',
+    '7' : 'воскресенье'
+};
+
+/**
+ * M3u class
+ * @param url
+ * @constructor
+ */
 var M3u = function (url) {
     var url = 'http://megatv.ck.ua/megatv-promo.m3u';
     var plist = '';
@@ -69,7 +98,13 @@ var M3u = function (url) {
     }
 }
 
+
+/**
+ *  MainMenu class
+ * @constructor
+ */
 MainMenu = function () {
+    this.selectedCaption = '';
     this.selected = -1;
     this.categories = [];
     this.buildCats = function () {
@@ -85,14 +120,12 @@ MainMenu = function () {
             index++;
             this.categories.push(category);
         }
-        $('.header').html('build cats');
     };
 
     this.init = function () {
         this.buildCats();
         var parent = $('#cat-list-back');
         this.list = function (callback) {
-            $('.header').html(this.categories.join(', '));
             return new PlayList(this.categories, parent, callback);
         }
     }
@@ -120,6 +153,14 @@ MainMenu = function () {
     this.init(null);
 }
 
+
+/**
+ *  Playlist list class
+ * @param canals
+ * @param container
+ * @param callback
+ * @constructor
+ */
 PlayList = function (canals, container, callback) {
 
     var parent = container;
@@ -159,11 +200,12 @@ PlayList = function (canals, container, callback) {
     }
 
     this.buildPlaylistPage = function (page, selectFirst) {
+
+        playLast.remember('', page);
         parent.html('');
         var content = '<ul id="playlist">';
         var startIndex = page * this.visibleCanals;
         var endIndex = startIndex + this.visibleCanals;
-        $('.header').html(startIndex + '--' + endIndex);
         for (var i = startIndex; i < endIndex; i++) {
             content += this.buildCanalLine(this.canals[i]);
         }
@@ -183,7 +225,6 @@ PlayList = function (canals, container, callback) {
         if (Main.screen == 1) {
             epg.getDProgram();
         }
-
     }
 
     this.buildCanalLine = function (canal) {
@@ -224,6 +265,11 @@ PlayList = function (canals, container, callback) {
     this.buildPlaylistPage(0);
 };
 
+
+/**
+ *  Epg class
+ * @constructor
+ */
 var Epg = function () {
     this.url = 'http://megatv.ck.ua/program.php?sort=today&chan=';
     this.program = '';
@@ -234,6 +280,26 @@ var Epg = function () {
         var program = data.substr(0, end);
 
         return program;
+    }
+
+    Epg.scroll = function(){
+        $('#epg').scrollTop(0);
+        var date = new Date();
+        var hour = parseInt(date.getHours());
+        $('#epg-table .time').each(function(){
+            var time = $(this).html().split('-');
+            if( parseInt(time[0]) == parseInt(hour)){
+                alert( parseInt(time[0]) +'>'+ parseInt(hour));
+                var offset = $(this).offset().top;
+                $('#epg').scrollTop(offset - 60);
+                return;
+            } else if( parseInt(time[0]) == parseInt(hour) - 1){
+                alert( parseInt(time[0]) +'>'+ parseInt(hour));
+                var offset = $(this).offset().top;
+                $('#epg').scrollTop(offset - 60);
+                return;
+            }
+        });
     }
 
     this.getDProgram = function () {
@@ -257,8 +323,9 @@ var Epg = function () {
                 success: function (data) {
                     this.program = parse(data);
                     Epg.programs[channel] = this.program;
-
                     $('#epg-table').html(this.program);
+                    Epg.scroll();
+
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
                     alert('err ' + textStatus);
@@ -266,8 +333,103 @@ var Epg = function () {
             });
         } else {
             $('#epg-table').html(Epg.programs[channel]);
+            Epg.scroll();
         }
     }
 };
 
 
+/**
+ *  Play Last
+ */
+var PlayLast = function(){
+
+    this.idCat = '';
+    this.page = '';
+    this.idChannel = '';
+
+    this.main = null;
+
+
+    this.forget = function(){
+        document.cookie = 'idCat=';
+        document.cookie = 'page=';
+        document.cookie = 'idChannel=';
+    }
+
+    this.getSaved = function(){
+        var cookie = this.parseCookie();
+        this.idCat = cookie['idCat'];
+        this.page = cookie['page'];
+        this.idChannel = cookie['idChannel'];
+    }
+
+    this.check = function(main){
+        this.main = main;
+        if(this.page.toString().length > 0 &&
+            this.idCat.toString().length > 0 &&
+            this.idChannel.toString().length > 0
+        ){
+            alert('got saved, play last');
+            this.playLast(this.idCat, this.page, this.idChannel);
+        }
+    }
+
+    this.remember = function(idCat, page, idChannel){
+        if(!isNaN(idCat) && idCat.length > 0){
+            document.cookie = 'idCat='+idCat;
+        }
+        if( isFinite(page) && page.toString().length > 0){
+            document.cookie = 'page='+page;
+        }
+        if(!isNaN(idChannel)){
+            document.cookie = 'idChannel='+idChannel;
+        }
+    }
+
+    this.playLast = function(idCat, page, idChannel){
+        alert(idCat +"|"+ page +"|"+ idChannel);
+        MainMenu.selected = idCat;
+        this.main.showPlaylist(idCat);
+        this.main.playlist.page = page;
+        this.main.playlist.nextPage();
+        $('.canalline').removeClass('selected');
+        $($('.canalline')[idChannel]).addClass('selected');
+        this.main.handlePlayKey();
+        alert(document.cookie);
+    }
+
+    this.parseCookie = function () {
+        var result = [];
+        alert(document.cookie);
+        document.cookie.split('; ').forEach(function (e) {
+            var item = e.split('=');
+            result[item[0]] = item[1];
+        });
+        return result;
+    };
+
+    this.getSaved();
+}
+
+
+/**
+ *  misc functions
+ */
+function dateLabel(){
+    var date = new Date();
+    var string = days[date.getDay()] + ', ';
+    string += date.getDate() + ' ';
+    string += months[date.getMonth()] + ' ';
+    string += date.getFullYear() + ', ';
+    string += date.getHours() + ':';
+    string += date.getMinutes();
+
+    $('#header-label').html(string);
+}
+
+function timeLabel(){
+    var date = new Date();
+    var timeString = date.getHours() + ':' + date.getMinutes();
+    $('#play-screen .header p .time').html(timeString);
+}
