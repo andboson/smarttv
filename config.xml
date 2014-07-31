@@ -3,11 +3,11 @@
 	<cpname itemtype="string"></cpname>
 	<cplogo itemtype="string"></cplogo>
 	<cpauthjs itemtype="string"></cpauthjs>
-	<ThumbIcon itemtype="string">icon/sampleIcon_106_87.png</ThumbIcon>
-	<BigThumbIcon itemtype="string">icon/sampleIcon_115_95.png</BigThumbIcon>
-	<ListIcon itemtype="string">icon/sampleIcon_85_70.png</ListIcon>
-	<BigListIcon itemtype="string">icon/sampleIcon_95_78.png</BigListIcon>
-	<category itemtype="string"></category>
+	<ThumbIcon itemtype="string">app/images/list_75_85.png</ThumbIcon>
+	<BigThumbIcon itemtype="string">app/images/list_75_85.png</BigThumbIcon>
+	<ListIcon itemtype="string">app/images/list_75_85.png</ListIcon>
+	<BigListIcon itemtype="string">app/images/list_75_85.png</BigListIcon>
+	<category itemtype="string">Internet TV</category>
 	<autoUpdate itemtype="boolean">y</autoUpdate>
 	<ver itemtype="string">0.100</ver>
 	<mgrver itemtype="string"></mgrver>
@@ -18,7 +18,7 @@
 	<childlock itemtype="boolean">n</childlock>
 	<videomute itemtype="boolean">n</videomute>
 	<dcont itemtype="boolean">y</dcont>
-	<widgetname itemtype="string">test</widgetname>
+	<widgetname itemtype="string">MegaTV</widgetname>
 	<description itemtype="string"></description>
 	<width itemtype="string">1280</width>
 	<height itemtype="string">720</height>
@@ -26,6 +26,6 @@
 		<name itemtype="string"></name>
 		<email itemtype="string"></email>
 		<link itemtype="string"></link>
-		<organization itemtype="string"></organization>
+		<organization itemtype="string">MegaStyle Service</organization>
 	</author>
 </widget>

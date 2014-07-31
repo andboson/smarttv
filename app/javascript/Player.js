@@ -39,12 +39,13 @@ Player.deinit = function () {
 };
 
 Player.setWindow = function () {
+    sf.service.VideoPlayer.setFullScreen(false);
     sf.service.VideoPlayer.hide();
 };
 
 Player.setFullscreen = function () {
     sf.service.VideoPlayer.show();
-    // sf.service.VideoPlayer.setFullScreen(true);
+    sf.service.VideoPlayer.setFullScreen(true);
     sf.service.VideoPlayer.setPosition({
         left: 0,
         top: 0,
@@ -91,9 +92,9 @@ Player.pauseVideo = function () {
 Player.stopVideo = function () {
     if (this.state != this.STOPPED) {
         this.state = this.STOPPED;
-        // sf.service.VideoPlayer.setFullScreen(false);
+        sf.service.VideoPlayer.setFullScreen(false);
         sf.service.VideoPlayer.stop();
-        // sf.service.VideoPlayer.hide();
+        sf.service.VideoPlayer.hide();
         Main.enableKeys();
         widgetAPI.sendReadyEvent();
 

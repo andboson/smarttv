@@ -2,23 +2,23 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-		<title>test2</title>
+		<title>MegaTV</title>
 
 		<!-- TODO : Common API -->
+        <script type='text/javascript' language='javascript' src='$MANAGER_WIDGET/Common/af/2.0.0/loader.js'></script>
         <script type='text/javascript' language='javascript' src='$MANAGER_WIDGET/Common/API/Widget.js'></script>
         <script type='text/javascript' language='javascript' src='$MANAGER_WIDGET/Common/API/TVKeyValue.js'></script>
-        <script type='text/javascript' language='javascript' src='$MANAGER_WIDGET/Common/af/2.0.0/loader.js'></script>
+
 
 		<!-- TODO : Javascript code -->
-		<script language="javascript" type="text/javascript" src="app/javascript/lib.js"></script>
-		<script language="javascript" type="text/javascript" src="app/javascript/Main.js"></script>
 		<script language="javascript" type="text/javascript" src="app/javascript/Player.js"></script>
+        <script language="javascript" type="text/javascript" src="app/javascript/lib.js"></script>
+        <script language="javascript" type="text/javascript" src="app/javascript/Main.js"></script>
 
 		<!-- TODO : Style sheets code -->
 		<link rel="stylesheet" href="app/stylesheets/Main.css" type="text/css">
 
 		<!-- TODO: Plugins -->
-
 </head>
 
 	<body onload="Main.onLoad();" onunload="Main.onUnload();">
@@ -72,8 +72,11 @@
             <div id="epg">
                 <table id="epg-table"></table>
             </div>
+            <div class="clearfix"></div>
+            <div id="pager"></div>
         </div>
-        <div class="clearfix"></div>
+
+
     <!-- Dummy anchor as focus for key events -->
     <a href='javascript:void(0);' id='anchor' onkeydown='Main.keyDown();'></a>
 	</body>

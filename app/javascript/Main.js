@@ -179,6 +179,8 @@ Main.showMainScreen = function () {
         $('#container').html('');
         menu.pickSelected(cb);
     });
+
+    this.playlist.callback = null;
     this.screen = 0;
 }
 

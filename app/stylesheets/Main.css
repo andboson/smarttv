@@ -71,7 +71,7 @@ body
 }
 #back-btn{
     border-radius: 0 20px 20px 0;
-    background-color: rgba(119, 136, 153, 0.10);
+    background-color: rgba(119, 136, 153, 0.15);
     float: left;
     height: 380px;
     width: 50px;
@@ -100,7 +100,7 @@ body
     color: #ffffff;
     padding: 10px;
     border-radius: 10px;
-    background-color: rgba(119, 136, 153, 0.10);
+    background-color: rgba(119, 136, 153, 0.15);
 }
 
 .epg-selected{
@@ -292,10 +292,14 @@ div#cat-list-back ul#playlist .canalline div.in{
     border-radius: 8px;
 }
 
-
-
 .curr{
     margin-top: 70px;
     margin-left: 70px;
     float: left;
+}
+
+#pager{
+    padding-left: 220px;
+    font-size: 16px;
+    color: #ffffff;
 }

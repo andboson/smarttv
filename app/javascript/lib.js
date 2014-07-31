@@ -181,21 +181,28 @@ PlayList = function (canals, container, callback) {
         }
         selected.next().addClass('selected');
         selected.removeClass('selected');
-        epg.getDProgram();
+        if (Main.screen == 1) {
+            epg.getDProgram();
+        }
         this.selectedIndex = selected.next().index();
     }
 
 
     this.up = function () {
+        alert(Main.screen);
+        alert(this.page);
         var selected = $('.canalline.selected');
         if (selected.index() == 0) {
             this.page--;
+            alert(this.page);
             this.prevPage();
             return;
         }
         selected.prev().addClass('selected');
         selected.removeClass('selected');
-        epg.getDProgram();
+        if (Main.screen == 1) {
+            epg.getDProgram();
+        }
         this.selectedIndex = selected.prev().index();
     }
 
@@ -214,8 +221,11 @@ PlayList = function (canals, container, callback) {
 
         if (selectFirst != false) {
             $('.canalline').first().addClass('selected');
-        } else if (selectFirst == false) {
+        } else if (selectFirst === false) {
+            alert('last');
             $('.canalline').last().addClass('selected');
+        } else {
+            alert('hm');
         }
 
         if (this.callback) {
@@ -225,6 +235,8 @@ PlayList = function (canals, container, callback) {
         if (Main.screen == 1) {
             epg.getDProgram();
         }
+
+        $('#pager').html( 'Страница ' + (page + 1) + ' из ' + this.pages);
     }
 
     this.buildCanalLine = function (canal) {
@@ -258,6 +270,7 @@ PlayList = function (canals, container, callback) {
         if (this.page < 0) {
             this.page = this.pages - 1;
         }
+
         this.buildPlaylistPage(this.page, false);
         this.selectedIndex = (this.visibleCanals - 1);
     }
@@ -308,6 +321,7 @@ var Epg = function () {
         if (selectedItem == undefined) {
             return;
         }
+
         var channel = selectedItem.attr('id').match(/\d+/)[0];
         if (!channel) {
             return;
@@ -352,19 +366,21 @@ var PlayLast = function(){
 
 
     this.forget = function(){
-        document.cookie = 'idCat=';
-        document.cookie = 'page=';
-        document.cookie = 'idChannel=';
+        sf.core.localData('idCat', null);
+        sf.core.localData('page', null);
+        sf.core.localData('idChannel', null);
     }
 
     this.getSaved = function(){
-        var cookie = this.parseCookie();
-        this.idCat = cookie['idCat'];
-        this.page = cookie['page'];
-        this.idChannel = cookie['idChannel'];
+        this.idCat = sf.core.localData('idCat');
+        this.page = sf.core.localData('page');
+        this.idChannel = sf.core.localData('idChannel');
     }
 
     this.check = function(main){
+
+        this.getSaved();
+
         this.main = main;
         if(this.page.toString().length > 0 &&
             this.idCat.toString().length > 0 &&
@@ -377,13 +393,13 @@ var PlayLast = function(){
 
     this.remember = function(idCat, page, idChannel){
         if(!isNaN(idCat) && idCat.length > 0){
-            document.cookie = 'idCat='+idCat;
+            sf.core.localData('idCat', idCat);
         }
         if( isFinite(page) && page.toString().length > 0){
-            document.cookie = 'page='+page;
+            sf.core.localData('page', page);
         }
         if(!isNaN(idChannel)){
-            document.cookie = 'idChannel='+idChannel;
+            sf.core.localData('idChannel', idChannel);
         }
     }
 
@@ -396,7 +412,6 @@ var PlayLast = function(){
         $('.canalline').removeClass('selected');
         $($('.canalline')[idChannel]).addClass('selected');
         this.main.handlePlayKey();
-        alert(document.cookie);
     }
 
     this.parseCookie = function () {
@@ -409,7 +424,6 @@ var PlayLast = function(){
         return result;
     };
 
-    this.getSaved();
 }
 
 
