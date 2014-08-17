@@ -8,7 +8,8 @@
         <script type='text/javascript' language='javascript' src='$MANAGER_WIDGET/Common/af/2.0.0/loader.js'></script>
         <script type='text/javascript' language='javascript' src='$MANAGER_WIDGET/Common/API/Widget.js'></script>
         <script type='text/javascript' language='javascript' src='$MANAGER_WIDGET/Common/API/TVKeyValue.js'></script>
-
+        <script type="text/javascript" src="$MANAGER_WIDGET/Common/webapi/1.0/deviceapis.js"></script>
+        <script type="text/javascript" src="$MANAGER_WIDGET/Common/webapi/1.0/webapis.js"></script>
 
 		<!-- TODO : Javascript code -->
 		<script language="javascript" type="text/javascript" src="app/javascript/Player.js"></script>
@@ -19,7 +20,16 @@
 		<link rel="stylesheet" href="app/stylesheets/Main.css" type="text/css">
 
 		<!-- TODO: Plugins -->
-</head>
+        <object id="pluginPlayer" border=0 classid="clsid:SAMSUNG-INFOLINK-PLAYER"></object>
+        <object id="pluginAudio" border=0 classid="clsid:SAMSUNG-INFOLINK-AUDIO"></object>
+
+        <!-- Must keep this id name -->
+        <object id="pluginObjectTVMW" border=0 classid="clsid:SAMSUNG-INFOLINK-TVMW"></object>
+        <object id="pluginObjectNNavi" border=0 classid="clsid:SAMSUNG-INFOLINK-NNAVI"></object>
+        <object id='pluginObjectTV' border=0 classid='clsid:SAMSUNG-INFOLINK-TV'></object>
+        <object id="pluginObjectTime" border=0 classid="clsid:SAMSUNG-INFOLINK-TIME"></object>
+
+    </head>
 
 	<body onload="Main.onLoad();" onunload="Main.onUnload();">
     <div id="splash"></div>
@@ -76,7 +86,12 @@
             <div id="pager"></div>
         </div>
 
-
+    <div id='popup'></div>
+    <div id='display'><div class="text"></div></div>
+    <div id='soundcontrol'>
+        <div class="percent"></div>
+        <div class="stripes-vol"></div>
+    </div>
     <!-- Dummy anchor as focus for key events -->
     <a href='javascript:void(0);' id='anchor' onkeydown='Main.keyDown();'></a>
 	</body>

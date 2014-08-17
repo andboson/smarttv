@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <widget>
-	<cpname itemtype="string"></cpname>
+	<cpname itemtype="string">MegaTV</cpname>
 	<cplogo itemtype="string"></cplogo>
 	<cpauthjs itemtype="string"></cpauthjs>
-	<ThumbIcon itemtype="string">app/images/list_75_85.png</ThumbIcon>
-	<BigThumbIcon itemtype="string">app/images/list_75_85.png</BigThumbIcon>
-	<ListIcon itemtype="string">app/images/list_75_85.png</ListIcon>
-	<BigListIcon itemtype="string">app/images/list_75_85.png</BigListIcon>
+    <ThumbIcon itemtype="string">app/images/default_106.png</ThumbIcon>
+    <BigThumbIcon itemtype="string">app/images/default_115.png</BigThumbIcon>
+    <ListIcon itemtype="string">app/images/default_85.png</ListIcon>
+    <BigListIcon itemtype="string">app/images/default_95.png</BigListIcon>
 	<category itemtype="string">Internet TV</category>
 	<autoUpdate itemtype="boolean">y</autoUpdate>
 	<ver itemtype="string">0.100</ver>

@@ -1,11 +1,15 @@
 var widgetAPI = new Common.API.Widget();
 var tvKey = new Common.API.TVKeyValue();
+var audiocontrol = deviceapis.audiocontrol;
 var epg = new Epg();
 var playLast = new PlayLast();
+var audio = null;
+var TVPlugin1 = false;
 
+var nav = {};
 var Main =
 {
-    focusedEpg:0,
+    focusedEpg: 0,
     m3uObj: null,
     screen: 0,
     selectedVideo: 0,
@@ -25,23 +29,24 @@ var Main =
 Main.onLoad = function () {
     alert("onload");
 
+    Display.init();
     if (Player.init()) {
-        Player.stopCallback = function () {
-            Main.setWindowMode();
-        }
         this.showMainScreen();
+        audio = new Audio();
         // Enable key event processing
         this.enableKeys();
         dateLabel();
-        window.setInterval(dateLabel, 30);
-        window.setInterval(timeLabel, 30);
+        window.setInterval(dateLabel, 300);
+        window.setInterval(timeLabel, 300);
         widgetAPI.sendReadyEvent();
         playLast.check(this);
+        Player.setWindow();
     }
     else {
         alert("Failed to initialise");
     }
 }
+
 
 Main.onUnload = function () {
     Player.deinit();
@@ -54,6 +59,7 @@ Main.updateCurrentVideo = function (move) {
 Main.enableKeys = function () {
     document.getElementById("anchor").focus();
 }
+
 
 Main.keyDown = function () {
 
@@ -77,17 +83,12 @@ Main.keyDown = function () {
             sf.service.AVSetting.hide();
             break;
         case tvKey.KEY_RETURN:
+        case tvKey.KEY_EXIT:
         case tvKey.KEY_PANEL_RETURN:
             alert("RETURN");
+            Display.hide();
             sf.key.preventDefault();
-            if (this.screen == 1 ) {
-                this.showMainScreen();
-                Player.stopVideo();
-            } else if(this.screen == 0){
-                Main = null;
-                playLast.forget();
-                widgetAPI.sendReturnEvent();
-            }
+            this.handleExit();
             break;
             break;
 
@@ -120,16 +121,23 @@ Main.keyDown = function () {
 
         case tvKey.KEY_RIGHT:
             alert("DOWN");
-            if(Main.focusedEpg != 1 && Main.screen == 1){
+            if (Main.focusedEpg != 1 && Main.screen == 1) {
                 $('#epg').addClass('epg-selected');
                 Main.focusedEpg = 1;
+            } else if (Player.state == Player.PLAYING) {
+                audio.volUp();
             }
             break;
 
         case tvKey.KEY_LEFT:
-            if(Main.focusedEpg == 1) {
+            if (Main.focusedEpg == 1) {
                 $('#epg').removeClass('epg-selected');
                 Main.focusedEpg = 0;
+                return;
+            }
+
+            if (Player.state == Player.PLAYING) {
+                audio.volDown();
                 return;
             }
             alert("UP");
@@ -137,21 +145,29 @@ Main.keyDown = function () {
             break;
 
         case tvKey.KEY_UP:
-            if(Main.focusedEpg == 1) {
-                $('#epg').scrollTop( $('#epg').scrollTop() - 100);
+        case tvKey.KEY_CH_UP:
+            if (Main.focusedEpg == 1) {
+                $('#epg').scrollTop($('#epg').scrollTop() - 100);
                 return;
             }
             alert("UP");
             this.playlist.up();
+            if(Player.getState() == Player.PLAYING){
+                this.changeVideo();
+            }
             break;
 
         case tvKey.KEY_DOWN:
-            if(Main.focusedEpg == 1) {
-                $('#epg').scrollTop( $('#epg').scrollTop() + 100);
-                 return;
+        case tvKey.KEY_CH_DOWN:
+            if (Main.focusedEpg == 1) {
+                $('#epg').scrollTop($('#epg').scrollTop() + 100);
+                return;
             }
             alert("down");
             this.playlist.down();
+            if(Player.getState() == Player.PLAYING){
+                this.changeVideo();
+            }
             break;
 
         case tvKey.KEY_ENTER:
@@ -160,9 +176,18 @@ Main.keyDown = function () {
             this.handlePlayKey();
             break;
 
+        case tvKey.KEY_VOL_DOWN:
+        case tvKey.KEY_PANEL_VOL_DOWN:
+            audio.volDown();
+            break;
+
+        case tvKey.KEY_VOL_UP:
+        case tvKey.KEY_PANEL_VOL_UP:
+            audio.volUp();
+            break;
+
         case tvKey.KEY_MUTE:
-            alert("MUTE");
-            this.muteMode();
+            audio.toggleMute();
             break;
 
         default:
@@ -173,7 +198,7 @@ Main.keyDown = function () {
 
 Main.showMainScreen = function () {
     var menu = new MainMenu();
-    this.playlist = menu.list(function(cb){
+    this.playlist = menu.list(function (cb) {
         $('#splash').hide();
         $('#main-screen').show();
         $('#container').html('');
@@ -185,11 +210,11 @@ Main.showMainScreen = function () {
 }
 
 Main.showPlaylist = function (catId) {
-    if(this.m3uObj == null){
+    if (this.m3uObj == null) {
         this.m3uObj = new M3u(null);
     }
 
-    MainMenu.selectedCaption =  $('.canalline.selected').find('a').html();
+    MainMenu.selectedCaption = $('.canalline.selected').find('a').html();
     $('#cat-list-back').html('');
     $('#main-screen').hide();
     var parent = $('#container');
@@ -209,11 +234,11 @@ Main.handlePlayKey = function () {
         MainMenu.selected = url;
         playLast.remember(url);
         this.showPlaylist(url);
-    } else if( this.screen == 1 ) {
+    } else if (this.screen == 1) {
         switch (Player.getState()) {
             case Player.STOPPED:
                 Player.setFullscreen();
-                playLast.remember('','',$('.canalline.selected').index());
+                playLast.remember('', '', $('.canalline.selected').index());
                 Player.setVideo(url, name);
                 Player.playVideo();
                 break;
@@ -278,5 +303,43 @@ Main.toggleMode = function () {
         default:
             alert("ERROR: unexpected mode in toggleMode");
             break;
+    }
+}
+
+Main.changeVideo = function(){
+    var url = $('.canalline.selected').find('a').attr('href');
+    var name = $('.canalline.selected').find('a').html();
+    alert('changing video ' + url);
+    Player.setVideo(url, name);
+    Player.playVideo();
+}
+
+Main.handleExit = function () {
+    if (Player.state == Player.PLAYING) {
+        Player.stopVideo();
+        return;
+    }
+    if (this.screen == 1 && Player.state != Player.PLAYING) {
+        this.showMainScreen();
+        Player.stopVideo();
+    } else if (this.screen == 0) {
+        playLast.forget();
+        var pop = $('#popup');
+        pop.sfPopup({
+            text: 'Закрыть приложение?',
+            buttons: ['Да', 'Нет'],
+            timeout: 0,
+            defaultFocus: 1,    // index of default focused button. this indicates array index of 'buttons' option (zero-based)
+            callback: function (selectedIndex) {
+                if (selectedIndex == 0) {
+                    Main = null;
+                    widgetAPI.sendReturnEvent();
+                    return;
+                }
+                Main.enableKeys();
+            }
+        });
+        pop.sfPopup('show');
+        $('#popup').css('z-index', '10000');
     }
 }
