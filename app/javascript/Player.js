@@ -146,6 +146,9 @@ Player.playVideo = function()
         $('#play-screen').hide();
         this.state = this.PLAYING;
         this.setFullscreen();
+        this.plugin.SetInitialBuffer(640*1024);
+        this.plugin.SetPendingBuffer(640*1024);
+
         this.plugin.Play(this.url );
     }
 }
