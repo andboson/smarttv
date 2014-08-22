@@ -20,9 +20,10 @@ class DB
 
     public function insertProgramm(Programm $programm)
     {
+        $table= Programm::TABLE;
         $STH = $this->smartDb->prepare(
-            'INSERT INTO programm (channel, title, description, start, stop, date)
-             values (:channel, :title, :description, :start, :stop, :date)'
+            "INSERT INTO $table (channel, title, description, start, stop, date)
+             values (:channel, :title, :description, :start, :stop, :date)"
         );
         $STH->execute((array)$programm);
 
@@ -40,7 +41,7 @@ class DB
      */
     public function getEpgUrl()
     {
-        $stmt = $this->smartDb->prepare("TRUNCATE TABLE programm");
+        $stmt = $this->smartDb->prepare("TRUNCATE TABLE " . Programm::TABLE);
         $stmt->execute();
 
         return $this->epgUrl;
@@ -99,8 +100,9 @@ class DB
 
     public function getDayProgramm($channel)
     {
+        $table= Programm::TABLE;
         $stmt = $this->smartDb->prepare(
-            "SELECT * FROM programm WHERE channel=? AND DATE(date) = DATE(NOW())");
+            "SELECT * FROM $table WHERE channel=? AND DATE(date) = DATE(NOW())");
         $stmt->bindValue(1, $channel, PDO::PARAM_INT);
         $stmt->execute();
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -110,8 +112,9 @@ class DB
 
     public function getProgrammFromNow($channel)
     {
+        $table= Programm::TABLE;
         $stmt = $this->smartDb->prepare(
-            'SELECT * FROM programm
+            'SELECT * FROM $table
               WHERE channel=?
               AND stop > NOW()
               AND stop < DATE_ADD(DATE(NOW()), INTERVAL "1 6" DAY_HOUR)'

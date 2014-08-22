@@ -4,8 +4,8 @@ class Programm
 {
     const HOST = 'localhost';
     const DB = 'smarttv';
-    const USER = 'root';
-    const PASS = '1';
+    const USER = 'smarttv';
+    const PASS = 'pPys7BB2';
     const TABLE = 'programm';
 
     public $start;
