@@ -1,0 +1,1 @@
+SQLSTATE[28000] [1045] Access denied for user 'smart'@'localhost' (using password: YES)SQLSTATE[28000] [1045] Access denied for user 'smart'@'localhost' (using password: YES)

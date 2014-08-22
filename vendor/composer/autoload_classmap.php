@@ -6,7 +6,8 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'Config' => $baseDir . '/classes/Config.php',
+    'DB' => $baseDir . '/classes/DB.php',
     'EpgUrl' => $baseDir . '/classes/EpgUrl.php',
     'Parser' => $baseDir . '/classes/Parser.php',
+    'Programm' => $baseDir . '/classes/Programm.php',
 );

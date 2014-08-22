@@ -1,9 +1,9 @@
 <?php
 require 'vendor/autoload.php';
 
-$config = new Config();
-$url = $config->getEpgUrl();
+$db = new DB();
+$prg = new Programm();
 
-$parser = new Parser($url);
-//$parser->parse();
-//$parser->getStatus();
+$channel = $_REQUEST['channel'];
+header('Content-Type: application/json');
+echo $prg->getFromNow(3, $db);
