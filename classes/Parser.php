@@ -33,9 +33,8 @@ class Parser
 
     private function loadEpgFile()
     {
-       //$this->epgFile = file_get_contents($this->epgUrl);
-       $this->epgFile = file_get_contents('xaa');
-       $this->epgFile = file_get_contents('http://tv.ipnet.ua/epg/export.xml');
+       $this->epgFile = file_get_contents($this->epgUrl);
+       //$this->epgFile = file_get_contents('http://tv.ipnet.ua/epg/export.xml');
     }
 
     public function parse()
@@ -45,7 +44,6 @@ class Parser
         $saved = 0;
         foreach($xml->programme as $programm){
             $programm = (array)$programm;
-            print_r($programm);
             if( !in_array($programm['@attributes']['channel'], $this->canals)){
                continue;
             }
@@ -56,7 +54,6 @@ class Parser
             $programDb->description = $programm['description'];
             $programDb->title = $programm['title'];
             $programDb->date = $programm['date'];
-            print_r($programDb);
             $result = $programDb->save($this->db);
 
             if($result){
