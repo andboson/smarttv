@@ -4,7 +4,7 @@
  * @constructor
  */
 var Epg = function () {
-    this.url = 'http://megatv.ck.ua/program.php?sort=today&chan=';
+    this.url = 'http://megatv.ck.ua/smarttv/?channel=';
     this.program = '';
     Epg.programs = [];
 
@@ -13,26 +13,6 @@ var Epg = function () {
         var program = data.substr(0, end);
 
         return program;
-    }
-
-    Epg.scroll = function(){
-        $('#epg').scrollTop(0);
-        var date = new Date();
-        var hour = parseInt(date.getHours());
-        $('#epg-table .time').each(function(){
-            var time = $(this).html().split('-');
-            if( parseInt(time[0]) == parseInt(hour)){
-                alert( parseInt(time[0]) +'>'+ parseInt(hour));
-                var offset = $(this).offset().top;
-                $('#epg').scrollTop(offset - 60);
-                return;
-            } else if( parseInt(time[0]) == parseInt(hour) - 1){
-                alert( parseInt(time[0]) +'>'+ parseInt(hour));
-                var offset = $(this).offset().top;
-                $('#epg').scrollTop(offset - 60);
-                return;
-            }
-        });
     }
 
     this.getDProgram = function () {
@@ -55,19 +35,38 @@ var Epg = function () {
                 url: this.url + channel,
                 async: true,
                 success: function (data) {
-                    this.program = parse(data);
+                    this.program = data;
                     Epg.programs[channel] = this.program;
-                    $('#epg-table').html(this.program);
-                    Epg.scroll();
-
+                    var html = Epg.drawProgramm(data);
+                    $('#epg-table').html(html);
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
                     alert('err ' + textStatus);
                 }
             });
         } else {
-            $('#epg-table').html(Epg.programs[channel]);
-            Epg.scroll();
+            var html = Epg.drawProgramm(Epg.programs[channel]);
+            $('#epg-table').html(html);
         }
     }
+
+
 };
+
+Epg.drawProgramm = function(channelProgramm){
+    var output = '';
+    for(index in channelProgramm){
+        var startArr = channelProgramm[index].start.split(' ')[1].split(':');
+        var stopArr = channelProgramm[index].stop.split(' ')[1].split(':');
+        var oddity = index % 2 == 0 ? 'odd' : '';
+        output += '<tr class="' + oddity + '">';
+        output += '<td class="first" valign="top">' + startArr[0] + ':' + startArr[1];
+        output += ' - ' + stopArr[0] + ':' + stopArr[1] + '</td>';
+        output += '<td>' + channelProgramm[index].title + '</td>';
+        output += '</tr>';
+    }
+
+    output += '';
+
+    return output;
+}

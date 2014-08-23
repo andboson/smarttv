@@ -86,6 +86,8 @@ Main.keyDown = function () {
         case tvKey.KEY_EXIT:
         case tvKey.KEY_PANEL_RETURN:
             alert("RETURN");
+            $('#epg').removeClass('epg-selected');
+            Main.focusedEpg = 0;
             Display.hide();
             sf.key.preventDefault();
             this.handleExit();

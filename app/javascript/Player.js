@@ -13,13 +13,22 @@ var Player =
     REWIND : 4
 }
 
+
+function getAllMethods(object) {
+    return Object.getOwnPropertyNames(object).filter(function(property) {
+        return typeof object[property] == 'function';
+    });
+}
+
+
+
 Player.init = function()
 {
     var success = true;
     alert("success vale :  " + success);    
     this.state = this.STOPPED;
     this.plugin = document.getElementById("pluginPlayer");
-    //this.plugin.OnEvent=OnEvent;
+    this.plugin.OnEvent=OnEvent;
     this.plugin.OnStreamInfoReady = 'Player.setTotalTime';
     this.plugin.OnBufferingStart = 'Player.onBufferingStart';
     this.plugin.OnBufferingProgress = 'Player.onBufferingProgress';
@@ -205,6 +214,7 @@ Player.getState = function()
 
 Player.onBufferingStart = function()
 {
+    alert('startbuff');
     Display.status("Буферизация");
 }
 
@@ -233,6 +243,7 @@ onServerError = function()
 
 OnNetworkDisconnected = function()
 {
+    alert('error');
     Display.status("Ошибка сети!");
 }
 
