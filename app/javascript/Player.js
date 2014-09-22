@@ -38,7 +38,7 @@ Player.init = function()
     alert("success vale :  " + success);
     this.state = this.STOPPED;
     this.plugin = document.getElementById("pluginPlayer");
-    this.plugin.Open("Player","1.000","Player");
+    this.plugin.Open("Player","1.112","Player");
     this.plugin.OnEvent= "OnEvent";
     pluginWindow = document.getElementById("pluginObjectTVMW");
     this.setWindow();
@@ -159,7 +159,7 @@ Player.playVideo = function()
         this.plugin.Execute('Stop');
         this.plugin.Execute('InitPlayer', this.url);
         this.plugin.Execute('SetDisplayArea', 0, 0, 1280, 720);
-        this.plugin.Execute("SetInitialBufferSize", 400 * 1024);
+        this.plugin.Execute("SetInitialBufferSize", 1.5 * 400 * 1024);
         this.plugin.Execute('StartPlayback');
         alert('ply');
     }
@@ -224,7 +224,7 @@ Player.setTotalTime = function()
 }
 
 Player.setRusLang = function(code){
-    var countAudio = this.plugin.Execute('GetTotalNumOfStreamID', 1);
+    var countAudio = 2;//this.plugin.Execute('GetTotalNumOfStreamID', 1);
     for (var i = 0; i < countAudio; i++) {
         var lang = this.plugin.Execute('GetStreamLanguageInfo', 1, i);
         if( lang == Player.langsKey.RUS){
@@ -237,7 +237,7 @@ Player.setRusLang = function(code){
 }
 
 Player.setNextLang = function(){
-    var countAudio = this.plugin.Execute('GetTotalNumOfStreamID', 1);
+    var countAudio = 2; //this.plugin.Execute('GetTotalNumOfStreamID', 1);
     for (var i = 0; i < countAudio; i++) {
         if( i == Player.track){
             var nextLang = (i+ 1) < countAudio ? i+ 1 : 0;

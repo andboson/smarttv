@@ -55,6 +55,7 @@ body
     padding-left: 15px;
     color: #ffffff;
     background: #fff url('../images/date-label.png') 0 0;
+    white-space:nowrap;
 }
 
 
