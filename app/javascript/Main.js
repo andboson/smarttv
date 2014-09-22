@@ -4,7 +4,7 @@ var audiocontrol = deviceapis.audiocontrol;
 var epg = new Epg();
 var playLast = new PlayLast();
 var audio = null;
-var TVPlugin1 = false;
+var TVPlugin1 = document.getElementById("pluginObjectTV");;
 
 var nav = {};
 var Main =
@@ -29,6 +29,7 @@ var Main =
 Main.onLoad = function () {
     alert("onload");
 
+
     Display.init();
     if (Player.init()) {
         this.showMainScreen();
@@ -39,7 +40,8 @@ Main.onLoad = function () {
         window.setInterval(dateLabel, 300);
         window.setInterval(timeLabel, 300);
         widgetAPI.sendReadyEvent();
-        playLast.check(this);
+
+        //playLast.check(this);
         Player.setWindow();
     }
     else {
@@ -80,7 +82,7 @@ Main.keyDown = function () {
 
             break;
         case tvKey.KEY_BLUE:
-            sf.service.AVSetting.hide();
+            Player.setNextLang();
             break;
         case tvKey.KEY_RETURN:
         case tvKey.KEY_EXIT:
@@ -237,6 +239,8 @@ Main.handlePlayKey = function () {
         playLast.remember(url);
         this.showPlaylist(url);
     } else if (this.screen == 1) {
+        $('#epg').removeClass('epg-selected');
+        Main.focusedEpg = 0;
         switch (Player.getState()) {
             case Player.STOPPED:
                 Player.setFullscreen();

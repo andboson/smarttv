@@ -10,38 +10,43 @@ var Player =
     PLAYING : 1,
     PAUSED : 2,  
     FORWARD : 3,
-    REWIND : 4
+    REWIND : 4,
+    track: 0
 }
 
+Player.langs = {
+    6514793: 'Китайская',
+    6647399: 'Английская',
+    6713957: 'Француская',
+    6776178: 'Немецкая',
+    6911073: 'Итальянская',
+    6975598: 'Японская',
+    7040882: 'Корейская',
+    7368562: 'Португальская',
+    7501171: 'Русская',
+    7565409: 'Испанская',
+    8026747: 'Украинская'
+};
 
-function getAllMethods(object) {
-    return Object.getOwnPropertyNames(object).filter(function(property) {
-        return typeof object[property] == 'function';
-    });
+Player.langsKey = {
+    "RUS" : 7501171
 }
-
-
 
 Player.init = function()
 {
     var success = true;
-    alert("success vale :  " + success);    
+    alert("success vale :  " + success);
     this.state = this.STOPPED;
     this.plugin = document.getElementById("pluginPlayer");
-    this.plugin.OnEvent=OnEvent;
-    this.plugin.OnStreamInfoReady = 'Player.setTotalTime';
-    this.plugin.OnBufferingStart = 'Player.onBufferingStart';
-    this.plugin.OnBufferingProgress = 'Player.onBufferingProgress';
-    this.plugin.OnBufferingComplete = 'Player.onBufferingComplete';
+    this.plugin.Open("Player","1.000","Player");
+    this.plugin.OnEvent= "OnEvent";
     pluginWindow = document.getElementById("pluginObjectTVMW");
     this.setWindow();
     alert("success vale :  " + success);       
     return success;
 }
 
-function OnEvent(event,data1){
-    alert('event  ' + event);
-    alert('data1  ' + data1);
+function OnEvent(event,data1, data2){
 	switch (event) {
 	 
 	  case 14:// OnCurrentPlayBackTime, param = playback time in ms
@@ -57,11 +62,11 @@ function OnEvent(event,data1){
 	   break;
 	   
 	  case 3:  // OnStreamNotFound
-	   alert('Error: Stream not found');   
+          Display.status('Канал не найден');
 	   break;
 	   
 	  case 4:  // OnNetworkDisconnected
-	   alert('Error: Network disconnected');   
+	   Display.status('Нет соединения');
 	   break;
 	   
 	  case 6:  // OnRenderError
@@ -82,7 +87,7 @@ function OnEvent(event,data1){
 	    default:
 	     error = 'Unknown';
 	   }
-	   alert('Error: ' + error);   
+          Display.status('Ошибка воспроизведения ' + error);
 	   break;
 	   
 	  case 8:  // OnRenderingComplete
@@ -91,26 +96,23 @@ function OnEvent(event,data1){
 	   
 	  case 9:  // OnStreamInfoReady
 	   alert('updateStatus');
-	   Player.setTotalTime(data1);
+	   Player.setRusLang(data1);
 	   break; 
 	   
 	  case 11: // OnBufferingStart
 	   alert('Buffering started');
-	   Player.onBufferingStart();
+       Display.status('Буферизация');
 	   break;
 	   
 	  case 12: // OnBufferingComplete
 	   alert('Buffering complete');
-	   Player.onBufferingComplete();
+	   Display.hide();
 	   break;
 	   
 	  case 13: // OnBufferingProgress, param = progress in % 
 	   alert('Buffering: ');
-	   Player.onBufferingProgress(data1);
+       Display.status('Буферизация... ' + data1 + '%');
 	   break;
-
-	 
-
 	 }
 	
 }
@@ -128,13 +130,13 @@ Player.deinit = function()
 
 Player.setWindow = function()
 {
-    $('#pluginPlayer').hide();
+   // $('#pluginPlayer').hide();
 }
 
 Player.setFullscreen = function()
 {
     $('#pluginPlayer').show();
-    this.plugin.SetDisplayArea(0, 0, 1280, 720);
+    this.plugin.Execute('SetDisplayArea', 9, 9, 400, 400);
 }
 
 Player.setVideo = function(url)
@@ -151,14 +153,15 @@ Player.playVideo = function()
     }
     else
     {
-        this.plugin.Stop();
+        Display.status('Буферизация...');
         $('#play-screen').hide();
         this.state = this.PLAYING;
-        this.setFullscreen();
-        this.plugin.SetInitialBuffer(640*1024);
-        this.plugin.SetPendingBuffer(640*1024);
-
-        this.plugin.Play(this.url );
+        this.plugin.Execute('Stop');
+        this.plugin.Execute('InitPlayer', this.url);
+        this.plugin.Execute('SetDisplayArea', 0, 0, 1280, 720);
+        this.plugin.Execute("SetInitialBufferSize", 400 * 1024);
+        this.plugin.Execute('StartPlayback');
+        alert('ply');
     }
 }
 
@@ -174,9 +177,9 @@ Player.stopVideo = function()
     {
         this.state = this.STOPPED;
 
-        this.plugin.Stop();
+        //this.plugin.Stop();
 
-        
+        this.plugin.Execute('Stop');
         if (this.stopCallback)
         {
             this.stopCallback();
@@ -210,23 +213,7 @@ Player.getState = function()
     return this.state;
 }
 
-// Global functions called directly by the player 
 
-Player.onBufferingStart = function()
-{
-    alert('startbuff');
-    Display.status("Буферизация");
-}
-
-Player.onBufferingProgress = function(percent)
-{
-    Display.hide();
-}
-
-Player.onBufferingComplete = function()
-{
-    Display.status("Нет связи с сервером!");
-}
 
 Player.setCurTime = function(time)
 {
@@ -236,24 +223,36 @@ Player.setTotalTime = function()
 {
 }
 
-onServerError = function()
-{
-    Display.status("Нет связи с сервером!");
+Player.setRusLang = function(code){
+    var countAudio = this.plugin.Execute('GetTotalNumOfStreamID', 1);
+    for (var i = 0; i < countAudio; i++) {
+        var lang = this.plugin.Execute('GetStreamLanguageInfo', 1, i);
+        if( lang == Player.langsKey.RUS){
+            this.plugin.Execute('SetStreamID', 1, i);
+            Player.track = i;
+            alert('set lang for stream #:' + i);
+        }
+
+    }
 }
 
-OnNetworkDisconnected = function()
-{
-    alert('error');
-    Display.status("Ошибка сети!");
-}
-
-getBandwidth = function(bandwidth) { alert("getBandwidth " + bandwidth); }
-
-onDecoderReady = function() { alert("onDecoderReady"); }
-
-onRenderError = function() {
-    alert("onRenderError");
-    Display.status("Не могу воспроизвести!");
+Player.setNextLang = function(){
+    var countAudio = this.plugin.Execute('GetTotalNumOfStreamID', 1);
+    for (var i = 0; i < countAudio; i++) {
+        if( i == Player.track){
+            var nextLang = (i+ 1) < countAudio ? i+ 1 : 0;
+            var lang = this.plugin.Execute('GetStreamLanguageInfo', 1, nextLang);
+            var langString = Player.langs[lang];
+            Display.status(langString + ' дорожка');
+            alert(langString);
+            this.plugin.Execute('SetStreamID', 1, nextLang);
+            Player.track = nextLang;
+            window.setTimeout(function(){
+                Display.hide();
+            }, 200)
+            break;
+        }
+    }
 }
 
 stopPlayer = function()
@@ -261,6 +260,3 @@ stopPlayer = function()
     Player.stopVideo();
 }
 
-setTottalBuffer = function(buffer) { alert("setTottalBuffer " + buffer); }
-
-setCurBuffer = function(buffer) { alert("setCurBuffer " + buffer); }

@@ -75,10 +75,27 @@ body
 #back-btn h2{
     font-weight: normal;
 }
+
+#epg-btn h2{
+    font-weight: normal;
+}
+
 #back-btn{
     border-radius: 0 20px 20px 0;
     background-color: rgba(119, 136, 153, 0.15);
     float: left;
+    height: 380px;
+    width: 50px;
+    padding: 100px 0;
+    line-height: 50px;
+    color: white;
+    text-align: center;
+}
+
+#epg-btn{
+    border-radius: 20px 0 0 20px;
+    background-color: rgba(119, 136, 153, 0.15);
+    float: right;
     height: 380px;
     width: 50px;
     padding: 100px 0;
@@ -203,9 +220,10 @@ body
     position: absolute;
     left: 0px;
     top: 0px;
-    width: 1280px;
-    height: 720px;
-    z-index: 0;
+    width: 0px;
+    height: 0px;
+    z-index: 9999;
+    border: 1px orange solid;
 }
 
 #pluginTVMW{

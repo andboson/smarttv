@@ -8,6 +8,7 @@
         <script type='text/javascript' language='javascript' src='$MANAGER_WIDGET/Common/af/2.0.0/loader.js'></script>
         <script type='text/javascript' language='javascript' src='$MANAGER_WIDGET/Common/API/Widget.js'></script>
         <script type='text/javascript' language='javascript' src='$MANAGER_WIDGET/Common/API/TVKeyValue.js'></script>
+        <script type='text/javascript' language='javascript' src='$MANAGER_WIDGET/Common/API/Plugin.js'></script>
         <script type="text/javascript" src="$MANAGER_WIDGET/Common/webapi/1.0/deviceapis.js"></script>
         <script type="text/javascript" src="$MANAGER_WIDGET/Common/webapi/1.0/webapis.js"></script>
 
@@ -18,16 +19,6 @@
 
 		<!-- TODO : Style sheets code -->
 		<link rel="stylesheet" href="app/stylesheets/Main.css" type="text/css">
-
-		<!-- TODO: Plugins -->
-        <object id="pluginPlayer" border=0 classid="clsid:SAMSUNG-INFOLINK-PLAYER"></object>
-        <object id="pluginAudio" border=0 classid="clsid:SAMSUNG-INFOLINK-AUDIO"></object>
-
-        <!-- Must keep this id name -->
-        <object id="pluginObjectTVMW" border=0 classid="clsid:SAMSUNG-INFOLINK-TVMW"></object>
-        <object id="pluginObjectNNavi" border=0 classid="clsid:SAMSUNG-INFOLINK-NNAVI"></object>
-        <object id='pluginObjectTV' border=0 classid='clsid:SAMSUNG-INFOLINK-TV'></object>
-        <object id="pluginObjectTime" border=0 classid="clsid:SAMSUNG-INFOLINK-TIME"></object>
 
     </head>
 
@@ -82,6 +73,16 @@
             <div id="epg">
                 <table id="epg-table"></table>
             </div>
+            <div id="epg-btn">
+                <h2>></h2>
+                <h2>Т</h2>
+                <h2>В</h2>
+                <h2>-</h2>
+                <h2>Г</h2>
+                <h2>И</h2>
+                <h2>Д</h2>
+                <h2>></h2>
+            </div>
             <div class="clearfix"></div>
             <div id="pager"></div>
         </div>
@@ -94,5 +95,16 @@
     </div>
     <!-- Dummy anchor as focus for key events -->
     <a href='javascript:void(0);' id='anchor' onkeydown='Main.keyDown();'></a>
+
+    <!-- TODO: Plugins -->
+
+    <object id="pluginPlayer" border=0 classid="clsid:SAMSUNG-INFOLINK-SEF"></object>
+    <object id="pluginAudio" border=0 classid="clsid:SAMSUNG-INFOLINK-AUDIO"></object>
+
+    <!-- Must keep this id name -->
+    <object id="pluginObjectTVMW" border=0 classid="clsid:SAMSUNG-INFOLINK-TVMW"></object>
+    <object id="pluginObjectNNavi" border=0 classid="clsid:SAMSUNG-INFOLINK-NNAVI"></object>
+    <object id='pluginObjectTV' border=0 classid='clsid:SAMSUNG-INFOLINK-TV'></object>
+    <object id="pluginObjectTime" border=0 classid="clsid:SAMSUNG-INFOLINK-TIME"></object>
 	</body>
 </html>
