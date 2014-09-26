@@ -159,7 +159,8 @@ Player.playVideo = function()
         this.plugin.Execute('Stop');
         this.plugin.Execute('InitPlayer', this.url);
         this.plugin.Execute('SetDisplayArea', 0, 0, 1280, 720);
-        this.plugin.Execute("SetInitialBufferSize", 1.5 * 400 * 1024);
+        this.plugin.Execute("SetInitialBufferSize", 1 * 1024 * 1024);
+        this.plugin.Execute("SetPendingBuffer", 1.5 * 1024 * 1024);
         this.plugin.Execute('StartPlayback');
         alert('ply');
     }

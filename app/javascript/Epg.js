@@ -28,7 +28,6 @@ var Epg = function () {
         }
 
         alert('channel' + channel);
-        if (Epg.programs[channel] == undefined) {
             $('#epg-table').html('<tr><td><br><p>идет загрузка...</p></td></tr>tr>');
             $.ajax({
                 type: "GET",
@@ -44,10 +43,6 @@ var Epg = function () {
                     alert('err ' + textStatus);
                 }
             });
-        } else {
-            var html = Epg.drawProgramm(Epg.programs[channel]);
-            $('#epg-table').html(html);
-        }
     }
 
 
